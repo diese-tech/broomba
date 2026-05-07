@@ -1,0 +1,80 @@
+# Decisions — Broomba
+
+Log of architectural and product decisions. Date, decision, reasoning, tradeoffs.
+
+---
+
+## 2026-05-07 — Use Next.js App Router as the framework
+
+**Decision:** Build with Next.js 14 (App Router), TypeScript, Tailwind CSS.
+
+**Reasoning:**
+- One tool for routing, API routes, server components, and static rendering — no separate backend to stand up
+- App Router gives us React Server Components for fast page loads without extra complexity
+- TypeScript enforces the AI response JSON shape, reducing runtime surprises
+- Tailwind is fast for prototype UI iteration; no CSS file management
+
+**Tradeoffs:**
+- More opinionated than plain React + Express, but that's fine for a prototype
+- App Router is newer and has sharper edges than Pages Router, but the patterns are stable enough
+
+---
+
+## 2026-05-07 — Use local JSON file for Phase 1–3 storage
+
+**Decision:** Persist room checks to a local JSON file (`data/rooms.json`) rather than a database.
+
+**Reasoning:**
+- Zero infrastructure to set up for an early prototype
+- Easy to inspect and manually edit during development
+- Can be swapped for SQLite or Supabase in Phase 3 without changing the data shape
+
+**Tradeoffs:**
+- Not suitable for concurrent writes at scale (not a concern for a single-user local tool)
+- File-based storage won't work in serverless deployments — will need to upgrade before hosting
+
+---
+
+## 2026-05-07 — Start with Bro Mode as the only personality
+
+**Decision:** Ship one personality mode (Bro Mode) in the MVP. Design the prompt/response system to be swappable.
+
+**Reasoning:**
+- One well-executed voice is better than five mediocre ones
+- Bro Mode fits the Gen Z, funny, slightly-judgmental tone of the product vision
+- Building the abstraction early makes Phase 5 (personality system) cheap
+
+**Tradeoffs:**
+- Some users might not connect with Bro Mode — acceptable tradeoff for MVP
+- Future modes (Passive-Aggressive Roommate, Corporate Manager, etc.) are designed in but not built
+
+---
+
+## 2026-05-07 — Use Claude vision API for image analysis
+
+**Decision:** Use Anthropic's Claude claude-sonnet-4-6 (or later) with vision for room analysis.
+
+**Reasoning:**
+- Instruction-following for structured JSON output is reliable
+- Tone/personality shaping works well with Claude's system prompt
+- Already available in this environment; no additional API setup needed
+
+**Tradeoffs:**
+- Cost per analysis call (acceptable at MVP scale)
+- Latency for vision calls (~3–8s) — will need a loading state
+- Image privacy: user photos are sent to Anthropic API — must be disclosed to users
+
+---
+
+## 2026-05-07 — Return one cleanup action, not a list
+
+**Decision:** The AI should always return exactly one cleanup action per analysis.
+
+**Reasoning:**
+- Lists create overwhelm and avoidance — the opposite of the product's goal
+- One small action is psychologically easier to start
+- Matches the "3–5 minute reset" emotional win condition
+
+**Tradeoffs:**
+- Power users might want more — they can take the next check as their next action
+- Edge cases where a room needs multiple urgent actions — the status level communicates urgency
