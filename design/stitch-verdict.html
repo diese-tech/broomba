@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Syne:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#eae7ed",
+                        "secondary-container": "#25fea8",
+                        "inverse-surface": "#303034",
+                        "on-secondary-fixed-variant": "#005232",
+                        "on-primary-container": "#ece4ff",
+                        "outline-variant": "#cac3d9",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#00e293",
+                        "tertiary-fixed-dim": "#ffb77f",
+                        "surface-variant": "#e4e1e7",
+                        "tertiary-container": "#a05400",
+                        "surface-container-highest": "#e4e1e7",
+                        "on-secondary-fixed": "#002111",
+                        "on-surface-variant": "#484456",
+                        "tertiary": "#7c4000",
+                        "on-primary-fixed-variant": "#4b00d4",
+                        "surface-container-low": "#f6f2f8",
+                        "secondary-fixed": "#50ffaf",
+                        "outline": "#797488",
+                        "primary": "#550ee7",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#cbbeff",
+                        "on-secondary-container": "#007147",
+                        "inverse-on-surface": "#f3f0f5",
+                        "primary-fixed": "#e7deff",
+                        "on-primary-fixed": "#1e0061",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#6f3900",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#2f1500",
+                        "surface-dim": "#dcd9de",
+                        "primary-fixed-dim": "#cbbeff",
+                        "primary-container": "#6e3dff",
+                        "tertiary-fixed": "#ffdcc4",
+                        "secondary": "#006c44",
+                        "surface-bright": "#fbf8fe",
+                        "surface-tint": "#642ef5",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#fbf8fe",
+                        "background": "#fbf8fe",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#ffe3d0",
+                        "on-background": "#1b1b1f",
+                        "surface-container": "#f0edf2",
+                        "on-surface": "#1b1b1f",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "lg": "40px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "xl": "64px",
+                        "margin-mobile": "20px",
+                        "gutter-mobile": "16px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-base": ["Inter"],
+                        "h1": ["Syne"],
+                        "h3": ["Syne"],
+                        "h2": ["Syne"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-base": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h1": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "h3": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "h2": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .squish-active:active {
+            transform: scale(0.96);
+        }
+        .tinted-shadow {
+            box-shadow: 0 20px 30px -10px rgba(110, 61, 255, 0.12);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-base antialiased min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-16 pt-base bg-surface dark:bg-on-background docked full-width top-0 z-50">
+<div class="flex items-center gap-base">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center">
+<img alt="Broomba AI Character" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0ntieQ5PtnGDJjU5zvHA0r2QP1AX1y2FPdgSdrw3uXD9qnlf02vrBatx51CbFhe_Ez0t3ohFTEH-3wZOqu0uTNtO_gBk3t2AONBZceINcqnBNarMkI2VuOCZeDSSBneLeSlArDG7KyRdMuLUmiTouzJAemM860_1OrPnEwJZ6o6iIC7zO_bpEL1tUXdbOvtRMnzRGYuY1IldVcOBvXV9RTLV1hDc4IvMd2ZDozWqjLPw9GHWONkl4078gCPfeFJSDst2jBf3ZTuo"/>
+</div>
+</div>
+<h1 class="font-h1 text-h1 font-black text-primary dark:text-primary-fixed tracking-tighter">Broomba</h1>
+<button class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="face_retouching_natural">face_retouching_natural</span>
+</button>
+</header>
+<main class="px-margin-mobile pt-base flex flex-col gap-md">
+<!-- Hero Section: Messy Room & Status Badge -->
+<section class="relative w-full aspect-[4/5] rounded-lg overflow-hidden tinted-shadow">
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-angle shot of an extremely messy bedroom with clothes overflowing from a chair onto the floor, abandoned coffee mugs on various surfaces, and a general sense of domestic chaos. The lighting is dramatic and moody, casting soft purple-tinted shadows that align with a modern light-mode UI. The scene is captured with professional photography depth, emphasizing textures and vibrant, saturated colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMSNfolbGX-Whir-4GQ8p3-Xp3CMXU-SKqxRatHr2VIP9rLJ62rLX8DVChst-146uxMMuKVczvb8aJBVzZRk_SFmdrk7SJUi_DAX5PwOkEvhzwDBkTGjT-LYCDFRCPyp6ex_l-qaS-bBym4-bmbYrgpFzqA-KNiL2lg_CMOAvSHekJzU0SDW9JiRA-pynpzeOGBJWLyxaD4mqFKqF18uQWos7JZmVXI20dWDgWSkEWoe2ZsPyFLlhf5yER0u0FQ0pfnrQ7fwQgGGk"/>
+<!-- Floating Badge Overlay -->
+<div class="absolute top-4 right-4 -rotate-3">
+<span class="bg-error text-on-error font-h1 text-h3 px-6 py-2 rounded-full shadow-2xl uppercase tracking-widest block transform hover:rotate-0 transition-transform duration-300">
+                    Bro...
+                </span>
+</div>
+</section>
+<!-- The Roast -->
+<section class="flex flex-col gap-xs">
+<h2 class="font-h2 text-h2 text-primary leading-tight">
+                The laundry chair is gaining sentience. It's asking for a vote in the local elections.
+            </h2>
+</section>
+<!-- The Evidence Section -->
+<section class="flex flex-col gap-sm">
+<h3 class="font-label-caps text-label-caps text-outline uppercase tracking-widest px-xs">The Evidence</h3>
+<div class="grid grid-cols-1 gap-sm">
+<div class="glass-card p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="coffee_maker">coffee_maker</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">3 coffee mugs from different eras</p>
+</div>
+<div class="glass-card p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="bottom_sheets">bottom_sheets</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">The floor is a suggestion</p>
+</div>
+<div class="glass-card p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="terrain">terrain</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">Clothing mountain is now a range</p>
+</div>
+</div>
+</section>
+<!-- The Mission -->
+<section class="bg-secondary-container text-on-secondary-container p-md rounded-lg tinted-shadow flex flex-col gap-base border-2 border-secondary">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps bg-on-secondary-container/10 px-3 py-1 rounded-full">ONE TINY ACTION</span>
+<span class="font-label-caps text-label-caps text-on-secondary-container/70">3 MINS</span>
+</div>
+<h3 class="font-h3 text-h3 leading-none">Hang 5 items of clothing.</h3>
+<p class="font-body-base text-body-base opacity-80">Do it for your future self. They're crying.</p>
+</section>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-sm pt-base">
+<button class="squish-active w-full h-[56px] bg-primary text-on-primary font-h3 text-h3 rounded-full shadow-[0_8px_30px_rgba(85,14,231,0.3)] hover:opacity-90 transition-all flex items-center justify-center gap-base">
+                Done, I'm sorry
+                <span class="material-symbols-outlined" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="squish-active w-full h-[56px] bg-surface-container-high text-on-surface-variant font-body-lg text-body-lg rounded-full hover:bg-surface-variant transition-all">
+                Save to History
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-surface-container-low/80 backdrop-blur-xl border-t border-outline-variant/30 shadow-[0_-8px_30px_rgba(110,61,255,0.12)]">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 transition-all duration-300 scale-105" href="#">
+<span class="material-symbols-outlined" data-icon="home_app_fill">home_filled</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 opacity-70 hover:bg-surface-variant rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-caps text-label-caps mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 opacity-70 hover:bg-surface-variant rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

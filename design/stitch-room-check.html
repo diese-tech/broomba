@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Broomba - Room Check</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#eae7ed",
+                    "secondary-container": "#25fea8",
+                    "inverse-surface": "#303034",
+                    "on-secondary-fixed-variant": "#005232",
+                    "on-primary-container": "#ece4ff",
+                    "outline-variant": "#cac3d9",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#00e293",
+                    "tertiary-fixed-dim": "#ffb77f",
+                    "surface-variant": "#e4e1e7",
+                    "tertiary-container": "#a05400",
+                    "surface-container-highest": "#e4e1e7",
+                    "on-secondary-fixed": "#002111",
+                    "on-surface-variant": "#484456",
+                    "tertiary": "#7c4000",
+                    "on-primary-fixed-variant": "#4b00d4",
+                    "surface-container-low": "#f6f2f8",
+                    "secondary-fixed": "#50ffaf",
+                    "outline": "#797488",
+                    "primary": "#550ee7",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "inverse-primary": "#cbbeff",
+                    "on-secondary-container": "#007147",
+                    "inverse-on-surface": "#f3f0f5",
+                    "primary-fixed": "#e7deff",
+                    "on-primary-fixed": "#1e0061",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#6f3900",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#2f1500",
+                    "surface-dim": "#dcd9de",
+                    "primary-fixed-dim": "#cbbeff",
+                    "primary-container": "#6e3dff",
+                    "tertiary-fixed": "#ffdcc4",
+                    "secondary": "#006c44",
+                    "surface-bright": "#fbf8fe",
+                    "surface-tint": "#642ef5",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#fbf8fe",
+                    "background": "#fbf8fe",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#ffe3d0",
+                    "on-background": "#1b1b1f",
+                    "surface-container": "#f0edf2",
+                    "on-surface": "#1b1b1f",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "lg": "40px",
+                    "xs": "4px",
+                    "base": "8px",
+                    "xl": "64px",
+                    "margin-mobile": "20px",
+                    "gutter-mobile": "16px",
+                    "sm": "12px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-base": ["Inter"],
+                    "h1": ["Syne"],
+                    "h3": ["Syne"],
+                    "h2": ["Syne"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-base": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h1": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "h3": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "h2": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .squish-active:active {
+            transform: scale(0.96);
+        }
+        .rotated-badge {
+            transform: rotate(-2deg);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-base overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-16 pt-base bg-surface dark:bg-on-background docked full-width top-0 z-50">
+<div class="flex items-center gap-xs">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="Broomba AI Character" class="w-full h-full object-cover" data-alt="A charming and expressive cartoonish robot character representing a smart vacuum. The character has a friendly digital screen face with glowing blue eyes, styled in a high-energy vibrant digital art aesthetic with soft purple lighting and a premium 3D finish. The background is a clean, minimalist studio setting with high-key lighting that emphasizes its sleek, rounded design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX35-OVhAHLOtBdMpAL4OsfXsxNQNdh0lu42dZB1GkdGGIe08Kp0gdjxT3CsTfkmBDaJ4NNfX8Oq2KDsywcGSCv_2EZP-kt6TExGca2tjA5PvMHipurE2zXXs1FpI6m2CQUWelpQQgdLlD4o7zudGXOD8FnBhztlkpeTpEtzisI9iiL0ula5JrThR6GuKq537LyGmUSdj6Hb0MoQh9QbFUWxU1YYGCAs2L2INBlEkb99PbmmMo8O-Elh2RL9UW5KTeYs720dkWaso"/>
+</div>
+<h1 class="font-h1 text-h1 font-black text-primary dark:text-primary-fixed tracking-tighter">Broomba</h1>
+</div>
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity text-[32px] Active: scale-95 transition-transform duration-150" data-icon="face_retouching_natural">
+            face_retouching_natural
+        </button>
+</header>
+<main class="flex-grow px-margin-mobile pt-lg pb-xl max-w-md mx-auto w-full">
+<!-- Back Action -->
+<button class="flex items-center gap-xs text-on-surface-variant font-body-lg mb-md squish-active transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+<span>Back</span>
+</button>
+<!-- Header Section -->
+<div class="mb-lg">
+<div class="inline-block bg-tertiary-container text-on-tertiary-container px-sm py-xs rounded-full font-label-caps text-label-caps rotated-badge mb-base">
+                JUDGMENT TIME
+            </div>
+<h2 class="font-h2 text-h2 text-on-surface leading-none">Which room are we judging today?</h2>
+</div>
+<!-- Room Selection Bento Grid -->
+<div class="grid grid-cols-2 gap-md mb-xl">
+<!-- Kitchen -->
+<button class="col-span-1 group flex flex-col items-center justify-center bg-surface-container-low p-md rounded-lg shadow-[0_8px_30px_rgba(110,61,255,0.08)] squish-active transition-all hover:bg-primary-fixed">
+<div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-primary-container text-[32px]" data-icon="kitchen">kitchen</span>
+</div>
+<span class="font-h3 text-h3 text-on-surface">Kitchen</span>
+</button>
+<!-- Living Room -->
+<button class="col-span-1 group flex flex-col items-center justify-center bg-surface-container-low p-md rounded-lg shadow-[0_8px_30px_rgba(110,61,255,0.08)] squish-active transition-all hover:bg-secondary-fixed">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-secondary-container text-[32px]" data-icon="chair">chair</span>
+</div>
+<span class="font-h3 text-h3 text-on-surface">Living</span>
+</button>
+<!-- Bedroom -->
+<button class="col-span-1 group flex flex-col items-center justify-center bg-surface-container-low p-md rounded-lg shadow-[0_8px_30px_rgba(110,61,255,0.08)] squish-active transition-all hover:bg-tertiary-fixed">
+<div class="w-16 h-16 rounded-full bg-tertiary-container flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-tertiary-container text-[32px]" data-icon="bed">bed</span>
+</div>
+<span class="font-h3 text-h3 text-on-surface">Bedroom</span>
+</button>
+<!-- Bathroom -->
+<button class="col-span-1 group flex flex-col items-center justify-center bg-surface-container-low p-md rounded-lg shadow-[0_8px_30px_rgba(110,61,255,0.08)] squish-active transition-all hover:bg-primary-fixed-dim">
+<div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-primary text-[32px]" data-icon="bathtub">bathtub</span>
+</div>
+<span class="font-h3 text-h3 text-on-surface">Bathroom</span>
+</button>
+<!-- Other -->
+<button class="col-span-2 group flex items-center justify-center bg-surface-container-low p-md rounded-lg shadow-[0_8px_30px_rgba(110,61,255,0.08)] squish-active transition-all hover:bg-surface-variant">
+<div class="w-12 h-12 rounded-full bg-on-surface-variant flex items-center justify-center mr-md group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-surface text-[24px]" data-icon="more_horiz">more_horiz</span>
+</div>
+<span class="font-h3 text-h3 text-on-surface">Something Else</span>
+</button>
+</div>
+<!-- Call to Action -->
+<div class="relative flex flex-col items-center gap-md">
+<!-- Cam Shutter Style Button -->
+<button class="w-32 h-32 rounded-full bg-primary p-xs shadow-[0_20px_50px_rgba(85,14,231,0.3)] squish-active group">
+<div class="w-full h-full rounded-full border-4 border-on-primary border-dashed flex flex-col items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[48px] mb-xs group-hover:rotate-12 transition-transform" data-icon="photo_camera" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</div>
+</button>
+<div class="text-center">
+<h3 class="font-h3 text-h3 text-primary">Upload Photo</h3>
+<p class="text-on-surface-variant font-body-base">Let Broomba see the mess</p>
+</div>
+</div>
+<!-- Subtle "Judgment" Tease -->
+<div class="mt-xl p-md bg-surface-container-high rounded-lg border-2 border-primary/10 flex items-start gap-md">
+<span class="material-symbols-outlined text-primary text-[32px]" data-icon="smart_toy">smart_toy</span>
+<div>
+<p class="font-body-lg text-on-surface italic">"I've seen cleaner garage floors than what you're about to show me, haven't I?"</p>
+<p class="text-label-caps font-label-caps text-on-surface-variant mt-base">BROOMBA AI IS READY</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Suppressed due to task-focused flow as per Shell Visibility Rule, but keeping structure if needed for top-level) -->
+<!-- The prompt implies this is a specific action screen (Room Check), navigation is omitted to focus on the upload task. -->
+</body></html>

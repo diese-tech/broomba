@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#eae7ed",
+                    "secondary-container": "#25fea8",
+                    "inverse-surface": "#303034",
+                    "on-secondary-fixed-variant": "#005232",
+                    "on-primary-container": "#ece4ff",
+                    "outline-variant": "#cac3d9",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#00e293",
+                    "tertiary-fixed-dim": "#ffb77f",
+                    "surface-variant": "#e4e1e7",
+                    "tertiary-container": "#a05400",
+                    "surface-container-highest": "#e4e1e7",
+                    "on-secondary-fixed": "#002111",
+                    "on-surface-variant": "#484456",
+                    "tertiary": "#7c4000",
+                    "on-primary-fixed-variant": "#4b00d4",
+                    "surface-container-low": "#f6f2f8",
+                    "secondary-fixed": "#50ffaf",
+                    "outline": "#797488",
+                    "primary": "#550ee7",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "inverse-primary": "#cbbeff",
+                    "on-secondary-container": "#007147",
+                    "inverse-on-surface": "#f3f0f5",
+                    "primary-fixed": "#e7deff",
+                    "on-primary-fixed": "#1e0061",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#6f3900",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#2f1500",
+                    "surface-dim": "#dcd9de",
+                    "primary-fixed-dim": "#cbbeff",
+                    "primary-container": "#6e3dff",
+                    "tertiary-fixed": "#ffdcc4",
+                    "secondary": "#006c44",
+                    "surface-bright": "#fbf8fe",
+                    "surface-tint": "#642ef5",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#fbf8fe",
+                    "background": "#fbf8fe",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#ffe3d0",
+                    "on-background": "#1b1b1f",
+                    "surface-container": "#f0edf2",
+                    "on-surface": "#1b1b1f",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "lg": "40px",
+                    "xs": "4px",
+                    "base": "8px",
+                    "xl": "64px",
+                    "margin-mobile": "20px",
+                    "gutter-mobile": "16px",
+                    "sm": "12px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-base": ["Inter"],
+                    "h1": ["Syne"],
+                    "h3": ["Syne"],
+                    "h2": ["Syne"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-base": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h1": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "h3": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "h2": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mess-meter-segment {
+            height: 12px;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-base">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-on-background flex justify-between items-center w-full px-margin-mobile h-16 pt-base fixed top-0 z-50">
+<div class="flex items-center gap-base">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary shadow-sm">
+<img alt="Broomba AI Character" class="w-full h-full object-cover" data-alt="A stylized, friendly but slightly mischievous AI vacuum robot avatar with glowing purple eyes and a sleek white chassis. The robot is depicted in a high-quality 3D render style with soft studio lighting and a clean, minimalist background. The color palette features vibrant purples and bright whites, maintaining a modern and playful tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqaSIlescCPvwoBNm-VZhb2wrTOjTE4mVlUFb1uBIGQi08munO43bsQW5MHyJjQga64F-lkAIyUnMlx-pXtEqd5Zxpfug2nmxNk9h0ZqSV2-rtR_UVi7QC3Ib5CGcWPv7sFXDPL8UmV3Dbl2GScel0YrHP7RKqDr2d9WjNO7YvD-TaMODxarFTdBUTcK_4o8vn3ShO48pGdQnvDZKUjacPw3AiIYFYFsVNjQAg7s2ZPw6uIQPGroJBrvwKsp8UtPx9w-cgnMQ_OUc"/>
+</div>
+<span class="font-h1 text-h1 font-black text-primary dark:text-primary-fixed tracking-tighter">Broomba</span>
+</div>
+<button class="hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-150 text-primary dark:text-primary-fixed">
+<span class="material-symbols-outlined text-[32px]" data-icon="face_retouching_natural">face_retouching_natural</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile space-y-lg">
+<!-- Cheeky Greeting -->
+<section class="space-y-xs">
+<h1 class="font-h1 text-h1 text-on-background">Welcome back, messy.</h1>
+<p class="text-on-surface-variant font-body-lg">The dust bunnies have organized a union in the hallway. Do something.</p>
+</section>
+<!-- Room Status Grid -->
+<section class="space-y-md">
+<div class="flex justify-between items-end">
+<h2 class="font-h2 text-h2">Room Status</h2>
+<span class="text-label-caps font-label-caps text-primary bg-primary-fixed px-3 py-1 rounded-full">SCANNING...</span>
+</div>
+<div class="grid grid-cols-1 gap-md">
+<!-- Kitchen: Bro... (Electric Red) -->
+<div class="bg-surface-container-lowest rounded-lg p-md shadow-[0_20px_30px_rgba(110,61,255,0.08)] border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-14 h-14 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[28px]" data-icon="kitchen">kitchen</span>
+</div>
+<div>
+<h3 class="font-h3 text-h3">Kitchen</h3>
+<div class="flex gap-1 mt-1">
+<div class="mess-meter-segment bg-error"></div>
+<div class="mess-meter-segment bg-error"></div>
+<div class="mess-meter-segment bg-error"></div>
+<div class="mess-meter-segment bg-surface-container-high"></div>
+</div>
+</div>
+</div>
+<div class="rotate-[-3deg]">
+<span class="bg-error text-on-error font-h3 text-h3 px-4 py-1 rounded-DEFAULT shadow-lg">Bro...</span>
+</div>
+</div>
+<!-- Living Room: Slight Drift (Purple) -->
+<div class="bg-surface-container-lowest rounded-lg p-md shadow-[0_20px_30px_rgba(110,61,255,0.08)] border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]" data-icon="chair">chair</span>
+</div>
+<div>
+<h3 class="font-h3 text-h3">Living Room</h3>
+<div class="flex gap-1 mt-1">
+<div class="mess-meter-segment bg-primary"></div>
+<div class="mess-meter-segment bg-primary"></div>
+<div class="mess-meter-segment bg-surface-container-high"></div>
+<div class="mess-meter-segment bg-surface-container-high"></div>
+</div>
+</div>
+</div>
+<div class="rotate-[2deg]">
+<span class="bg-primary text-on-primary font-h3 text-h3 px-4 py-1 rounded-DEFAULT shadow-lg">Slight Drift</span>
+</div>
+</div>
+<!-- Bedroom: Stable (Mint) -->
+<div class="bg-surface-container-lowest rounded-lg p-md shadow-[0_20px_30px_rgba(110,61,255,0.08)] border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-14 h-14 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined text-[28px]" data-icon="bed">bed</span>
+</div>
+<div>
+<h3 class="font-h3 text-h3">Bedroom</h3>
+<div class="flex gap-1 mt-1">
+<div class="mess-meter-segment bg-secondary"></div>
+<div class="mess-meter-segment bg-surface-container-high"></div>
+<div class="mess-meter-segment bg-surface-container-high"></div>
+<div class="mess-meter-segment bg-surface-container-high"></div>
+</div>
+</div>
+</div>
+<div>
+<span class="bg-secondary text-on-secondary font-h3 text-h3 px-4 py-1 rounded-DEFAULT shadow-lg">Stable</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Roasts Section -->
+<section class="space-y-md">
+<h2 class="font-h2 text-h2">Recent Roasts</h2>
+<div class="flex overflow-x-auto gap-md pb-4 snap-x">
+<!-- Roast 1 -->
+<div class="min-w-[280px] bg-white/60 backdrop-blur-md p-md rounded-lg border border-white/40 shadow-sm snap-start">
+<div class="flex items-center gap-sm mb-base">
+<span class="material-symbols-outlined text-primary" data-icon="history">history</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">2 HOURS AGO</span>
+</div>
+<p class="font-body-lg text-on-surface">"I found a french fry under the sofa that could legally vote. We need to talk."</p>
+</div>
+<!-- Roast 2 -->
+<div class="min-w-[280px] bg-white/60 backdrop-blur-md p-md rounded-lg border border-white/40 shadow-sm snap-start">
+<div class="flex items-center gap-sm mb-base">
+<span class="material-symbols-outlined text-primary" data-icon="history">history</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">YESTERDAY</span>
+</div>
+<p class="font-body-lg text-on-surface">"Your floor is currently 15% dog hair by mass. Congratulations on the new rug."</p>
+</div>
+<!-- Roast 3 -->
+<div class="min-w-[280px] bg-white/60 backdrop-blur-md p-md rounded-lg border border-white/40 shadow-sm snap-start">
+<div class="flex items-center gap-sm mb-base">
+<span class="material-symbols-outlined text-primary" data-icon="history">history</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">3 DAYS AGO</span>
+</div>
+<p class="font-body-lg text-on-surface">"The kitchen counter is a petri dish with ambition. Cleaning mode engaged... finally."</p>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB: New Check -->
+<button class="fixed bottom-32 right-margin-mobile w-16 h-16 bg-primary text-on-primary rounded-full shadow-[0_8px_25px_rgba(85,14,231,0.4)] flex items-center justify-center active:scale-90 transition-all duration-200 z-40">
+<span class="material-symbols-outlined text-[32px]" data-icon="add_a_photo">add_a_photo</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-surface-container-low/80 backdrop-blur-xl border-t border-outline-variant/30 shadow-[0_-8px_30px_rgba(110,61,255,0.12)] rounded-t-lg">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 transition-all duration-300 scale-105 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="home_app_fill" style="font-variation-settings: 'FILL' 1;">home_filled</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<!-- History (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 opacity-70 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-caps text-label-caps mt-1">History</span>
+</a>
+<!-- Profile (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 opacity-70 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
