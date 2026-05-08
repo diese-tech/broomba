@@ -1,20 +1,66 @@
 import Link from "next/link";
 import { MOCK_HISTORY } from "@/lib/mock-analysis";
-import { getStatusConfig, formatRelativeTime } from "@/lib/status";
+import { formatRelativeTime } from "@/lib/status";
 import type { RoomStatus } from "@/types";
 
-const NEEDS_ATTENTION: RoomStatus[] = [
-  "Getting Suspicious",
-  "Side Quest",
-  "Bro…",
-];
+const STATUS_STYLES: Record<
+  RoomStatus,
+  {
+    badge: string;
+    icon: string;
+    meter: string;
+    fill: number;
+    rotate: string;
+    label?: string;
+  }
+> = {
+  Stable: {
+    badge: "bg-secondary text-on-secondary",
+    icon: "bg-secondary-fixed text-on-secondary-fixed-variant",
+    meter: "bg-secondary",
+    fill: 1,
+    rotate: "rotate-[1deg]",
+  },
+  "Slight Drift": {
+    badge: "bg-primary text-on-primary",
+    icon: "bg-primary-fixed text-primary",
+    meter: "bg-primary",
+    fill: 2,
+    rotate: "rotate-[2deg]",
+  },
+  "Getting Suspicious": {
+    badge: "bg-tertiary-container text-on-tertiary",
+    icon: "bg-tertiary-fixed text-tertiary",
+    meter: "bg-tertiary-container",
+    fill: 3,
+    rotate: "rotate-[-3deg]",
+  },
+  "Side Quest": {
+    badge: "bg-error text-on-error",
+    icon: "bg-error-container text-error",
+    meter: "bg-error",
+    fill: 4,
+    rotate: "rotate-[2deg]",
+  },
+  "Bro…": {
+    badge: "bg-error text-on-error",
+    icon: "bg-error-container text-error",
+    meter: "bg-error",
+    fill: 4,
+    rotate: "rotate-[-3deg]",
+    label: "Bro...",
+  },
+};
+
+const ROOM_ICONS: Record<string, string> = {
+  Kitchen: "kitchen",
+  "Living Room": "chair",
+  Bedroom: "bed",
+  Bathroom: "bathtub",
+  Office: "computer",
+};
 
 export default function Dashboard() {
-  const needsAttention = MOCK_HISTORY.filter((c) =>
-    NEEDS_ATTENTION.includes(c.analysis.status)
-  );
-
-  // Latest check per room
   const latestByRoom = Object.values(
     MOCK_HISTORY.reduce<Record<string, (typeof MOCK_HISTORY)[0]>>(
       (acc, check) => {
@@ -28,146 +74,129 @@ export default function Dashboard() {
     )
   );
 
-  return (
-    <div className="space-y-8">
-      {/* Hero CTA */}
-      <section className="rounded-2xl bg-zinc-900 p-6 text-center">
-        <p className="mb-1 text-sm font-medium text-zinc-400 uppercase tracking-widest">
-          Bro Mode
-        </p>
-        <h1 className="mb-2 text-3xl font-bold tracking-tight">
-          How bad is it in there?
-        </h1>
-        <p className="mb-6 text-zinc-400">
-          Upload a photo. Get roasted. Do one tiny thing.
-        </p>
-        <Link
-          href="/check"
-          className="inline-block rounded-xl bg-violet-600 px-8 py-3 font-semibold text-white transition hover:bg-violet-500 active:scale-95"
-        >
-          Check a Room
-        </Link>
-      </section>
+  const quip =
+    MOCK_HISTORY.find((check) => check.analysis.status !== "Stable")?.analysis
+      .roast ?? "The floor is visible. Suspicious, but promising.";
 
-      {/* Needs Attention */}
-      {needsAttention.length > 0 && (
-        <section>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-            Needs Attention
-          </h2>
-          <div className="space-y-2">
-            {needsAttention.map((check) => {
-              const cfg = getStatusConfig(check.analysis.status);
+  return (
+    <div className="min-h-screen bg-background pb-32 font-body-base">
+      <header className="fixed top-0 z-50 flex h-16 w-full items-center justify-between bg-surface px-margin-mobile pt-base">
+        <div className="flex items-center gap-base">
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-primary-fixed shadow-sm">
+            <span className="material-symbols-outlined text-primary">
+              smart_toy
+            </span>
+          </div>
+          <span className="font-h1 text-h1 text-primary">Broomba</span>
+        </div>
+        <button
+          type="button"
+          className="squish-active flex h-12 w-12 items-center justify-center rounded-full text-primary"
+          aria-label="Settings"
+        >
+          <span className="material-symbols-outlined text-[32px]">
+            face_retouching_natural
+          </span>
+        </button>
+      </header>
+
+      <main className="space-y-lg px-margin-mobile pb-4 pt-24">
+        <section className="space-y-xs">
+          <h1 className="font-h1 text-h1">Welcome back, messy.</h1>
+          <p className="font-body-lg text-body-lg text-on-surface-variant">
+            {quip}
+          </p>
+        </section>
+
+        <section className="space-y-md">
+          <div className="flex items-end justify-between gap-md">
+            <h2 className="font-h2 text-h2">Room Status</h2>
+            <span className="rounded-full bg-primary-fixed px-3 py-1 font-label-caps text-label-caps text-primary">
+              SCANNING...
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-md">
+            {latestByRoom.map((check) => {
+              const style = STATUS_STYLES[check.analysis.status];
               return (
                 <Link
                   key={check.id}
                   href={`/result?id=${check.id}&mock=1`}
-                  className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition hover:border-zinc-700"
+                  className="flex items-center justify-between rounded-lg border border-outline-variant/20 bg-surface-container-lowest p-md tinted-shadow"
                 >
-                  <div>
-                    <p className="font-semibold">{check.roomName}</p>
-                    <p className="text-sm text-zinc-400 line-clamp-1">
-                      {check.analysis.roast}
-                    </p>
-                  </div>
-                  <div className="ml-4 flex flex-col items-end gap-1">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cfg.bg} ${cfg.color}`}
+                  <div className="flex min-w-0 items-center gap-md">
+                    <div
+                      className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${style.icon}`}
                     >
-                      {cfg.emoji} {check.analysis.status}
-                    </span>
-                    <span className="text-xs text-zinc-500">
-                      {formatRelativeTime(check.timestamp)}
-                    </span>
+                      <span className="material-symbols-outlined text-[28px]">
+                        {ROOM_ICONS[check.roomName] ?? "other_houses"}
+                      </span>
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="truncate font-h3 text-h3">
+                        {check.roomName}
+                      </h3>
+                      <div className="mt-1 flex w-28 gap-1">
+                        {Array.from({ length: 4 }).map((_, index) => (
+                          <div
+                            key={index}
+                            className={`mess-meter-segment ${
+                              index < style.fill
+                                ? style.meter
+                                : "bg-surface-container-high"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
+                  <span
+                    className={`ml-md whitespace-nowrap rounded-DEFAULT px-4 py-1 font-h3 text-h3 shadow-lg ${style.badge} ${style.rotate}`}
+                  >
+                    {style.label ?? check.analysis.status}
+                  </span>
                 </Link>
               );
             })}
           </div>
         </section>
-      )}
 
-      {/* All Rooms */}
-      <section>
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-          All Rooms
-        </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {latestByRoom.map((check) => {
-            const cfg = getStatusConfig(check.analysis.status);
-            return (
+        <section className="space-y-md">
+          <h2 className="font-h2 text-h2">Recent Roasts</h2>
+          <div className="flex snap-x gap-md overflow-x-auto pb-4">
+            {MOCK_HISTORY.map((check) => (
               <Link
                 key={check.id}
                 href={`/result?id=${check.id}&mock=1`}
-                className="flex flex-col gap-2 rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition hover:border-zinc-700"
+                className="min-w-[280px] snap-start rounded-lg border border-white/40 bg-white/60 p-md shadow-sm backdrop-blur-md glass-card"
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">{check.roomName}</span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cfg.bg} ${cfg.color}`}
-                  >
-                    {cfg.emoji} {check.analysis.status}
+                <div className="mb-base flex items-center gap-sm">
+                  <span className="material-symbols-outlined text-primary">
+                    history
+                  </span>
+                  <span className="font-label-caps text-label-caps text-on-surface-variant">
+                    {formatRelativeTime(check.timestamp)}
                   </span>
                 </div>
-                <p className="text-sm text-zinc-400 line-clamp-2">
-                  {check.analysis.roast}
+                <p className="font-body-lg text-body-lg text-on-surface">
+                  &ldquo;{check.analysis.roast}&rdquo;
                 </p>
-                <div className="flex items-center justify-between text-xs text-zinc-500">
-                  <span>{check.analysis.effort} fix available</span>
-                  <span>{formatRelativeTime(check.timestamp)}</span>
-                </div>
               </Link>
-            );
-          })}
-          {/* Add new room card */}
-          <Link
-            href="/check"
-            className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-900/50 p-4 text-zinc-500 transition hover:border-zinc-500 hover:text-zinc-400"
-          >
-            <span className="text-2xl">+</span>
-            <span className="text-sm">Check a room</span>
-          </Link>
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      </main>
 
-      {/* Recent History */}
-      <section>
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-          Recent Checks
-        </h2>
-        <div className="space-y-2">
-          {MOCK_HISTORY.map((check) => {
-            const cfg = getStatusConfig(check.analysis.status);
-            return (
-              <Link
-                key={check.id}
-                href={`/result?id=${check.id}&mock=1`}
-                className="flex items-center gap-4 rounded-xl border border-zinc-800 bg-zinc-900 p-3 transition hover:border-zinc-700"
-              >
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xl ${cfg.bg}`}
-                >
-                  {cfg.emoji}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{check.roomName}</span>
-                    <span className={`text-xs ${cfg.color}`}>
-                      {check.analysis.status}
-                    </span>
-                  </div>
-                  <p className="truncate text-sm text-zinc-400">
-                    {check.analysis.roast}
-                  </p>
-                </div>
-                <span className="shrink-0 text-xs text-zinc-500">
-                  {formatRelativeTime(check.timestamp)}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+      <Link
+        href="/check"
+        className="squish-active fixed bottom-32 right-[20px] z-40 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-on-primary shadow-[0_8px_25px_rgba(85,14,231,0.4)]"
+        aria-label="Check a room"
+      >
+        <span className="material-symbols-outlined text-[32px]">
+          add_a_photo
+        </span>
+      </Link>
     </div>
   );
 }

@@ -5,8 +5,8 @@ export default function ResultPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex h-48 items-center justify-center text-zinc-500">
-          Loading…
+        <div className="flex h-screen items-center justify-center bg-background font-body-lg text-body-lg text-on-surface-variant">
+          Loading...
         </div>
       }
     >

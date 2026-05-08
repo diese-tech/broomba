@@ -1,11 +1,55 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-syne",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-inter",
+});
+
 export const metadata: Metadata = {
-  title: "Broomba — Your apartment has opinions.",
+  title: "Broomba - Your apartment has opinions.",
   description:
     "A personality-driven AI roommate that catches mess drift before life gets annoying.",
 };
+
+function BottomNav() {
+  return (
+    <nav className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around rounded-t-lg border-t border-outline-variant/30 bg-surface-container-low/80 px-4 pb-8 pt-4 shadow-[0_-8px_30px_rgba(110,61,255,0.12)] backdrop-blur-xl">
+      <Link
+        href="/"
+        className="flex scale-105 flex-col items-center justify-center rounded-full bg-secondary-container px-6 py-2 text-on-secondary-container transition-all duration-300 active:scale-95"
+      >
+        <span
+          className="material-symbols-outlined"
+          style={{ fontVariationSettings: "'FILL' 1" }}
+        >
+          home_filled
+        </span>
+        <span className="mt-1 font-label-caps text-label-caps">Home</span>
+      </Link>
+      <Link
+        href="/"
+        className="flex flex-col items-center justify-center rounded-full px-4 py-2 text-on-surface-variant opacity-70 transition-all active:scale-95"
+      >
+        <span className="material-symbols-outlined">history</span>
+        <span className="mt-1 font-label-caps text-label-caps">History</span>
+      </Link>
+      <span className="flex cursor-not-allowed flex-col items-center justify-center rounded-full px-4 py-2 text-on-surface-variant opacity-40">
+        <span className="material-symbols-outlined">person</span>
+        <span className="mt-1 font-label-caps text-label-caps">Profile</span>
+      </span>
+    </nav>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -14,21 +58,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased">
-        <div className="mx-auto max-w-2xl px-4 pb-20">
-          <header className="flex items-center justify-between py-6">
-            <a href="/" className="flex items-center gap-2">
-              <span className="text-2xl">🧹</span>
-              <span className="text-lg font-bold tracking-tight text-zinc-100">
-                Broomba
-              </span>
-            </a>
-            <span className="text-xs text-zinc-500">
-              your apartment has opinions
-            </span>
-          </header>
-          <main>{children}</main>
-        </div>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body
+        className={`${syne.variable} ${inter.variable} min-h-screen bg-background text-on-background antialiased`}
+      >
+        {children}
+        <BottomNav />
       </body>
     </html>
   );
