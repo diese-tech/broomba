@@ -69,3 +69,4 @@ Open [http://localhost:3000](http://localhost:3000)
 - [ROADMAP.md](./ROADMAP.md) — phases and deliverables
 - [TASKS.md](./TASKS.md) — current task tracking
 - [DECISIONS.md](./DECISIONS.md) — architectural decisions log
+- [docs/AI_WORKFLOW_GUARDRAILS.md](./docs/AI_WORKFLOW_GUARDRAILS.md) - guardrails for AI, async jobs, scheduling, and automation changes
