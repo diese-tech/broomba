@@ -1,16 +1,39 @@
 "use client";
 
-import { useState, useRef } from "react";
+import Link from "next/link";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getMockAnalysis } from "@/lib/mock-analysis";
 
-const PRESET_ROOMS = [
-  "Living Room",
-  "Bedroom",
-  "Kitchen",
-  "Bathroom",
-  "Office",
-  "Dining Room",
+const ROOM_OPTIONS = [
+  {
+    name: "Kitchen",
+    icon: "kitchen",
+    circle: "bg-primary-container text-on-primary-container",
+    hover: "hover:bg-primary-fixed",
+    quip: "Counter chaos tells me everything I need to know.",
+  },
+  {
+    name: "Living Room",
+    icon: "chair",
+    circle: "bg-secondary-container text-on-secondary-container",
+    hover: "hover:bg-secondary-fixed",
+    quip: "The couch area always has receipts. Usually literal ones.",
+  },
+  {
+    name: "Bedroom",
+    icon: "bed",
+    circle: "bg-tertiary-container text-on-tertiary-container",
+    hover: "hover:bg-tertiary-fixed",
+    quip: "The laundry chair and I are no longer on speaking terms.",
+  },
+  {
+    name: "Bathroom",
+    icon: "bathtub",
+    circle: "bg-primary text-on-primary",
+    hover: "hover:bg-primary-fixed-dim",
+    quip: "Show me the sink and I will show you the truth.",
+  },
 ];
 
 export default function CheckPage() {
@@ -23,6 +46,12 @@ export default function CheckPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const selectedRoom = roomName === "__custom__" ? customRoom : roomName;
+  const selectedOption = ROOM_OPTIONS.find((room) => room.name === roomName);
+  const quip =
+    roomName === "__custom__"
+      ? "A mystery room. Bold. Disturbing. I respect it."
+      : selectedOption?.quip ??
+        "I've seen cleaner garage floors than what you're about to show me, haven't I?";
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -40,11 +69,9 @@ export default function CheckPage() {
 
     setIsAnalyzing(true);
 
-    // Phase 1: mock analysis — simulate latency
     await new Promise((r) => setTimeout(r, 1800));
     const result = getMockAnalysis(selectedRoom);
 
-    // Store in sessionStorage so the result page can read it
     const checkData = {
       id: crypto.randomUUID(),
       roomName: selectedRoom,
@@ -58,74 +85,86 @@ export default function CheckPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Check a Room</h1>
-        <p className="mt-1 text-zinc-400">
-          Pick a room, upload a photo, get the verdict.
-        </p>
-      </div>
+    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-margin-mobile pb-32 pt-lg font-body-base">
+      <Link
+        href="/"
+        className="squish-active mb-md flex items-center gap-xs font-body-lg text-body-lg text-on-surface-variant"
+      >
+        <span className="material-symbols-outlined">arrow_back</span>
+        <span>Back</span>
+      </Link>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Room selection */}
-        <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-zinc-400">
-            Which room?
-          </h2>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {PRESET_ROOMS.map((room) => (
-              <button
-                key={room}
-                type="button"
-                onClick={() => setRoomName(room)}
-                className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                  roomName === room
-                    ? "border-violet-500 bg-violet-600/20 text-violet-300"
-                    : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-zinc-600"
-                }`}
-              >
-                {room}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => setRoomName("__custom__")}
-              className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                roomName === "__custom__"
-                  ? "border-violet-500 bg-violet-600/20 text-violet-300"
-                  : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-zinc-600"
-              }`}
-            >
-              Other…
-            </button>
-          </div>
-
-          {roomName === "__custom__" && (
-            <input
-              type="text"
-              placeholder="Name this room"
-              value={customRoom}
-              onChange={(e) => setCustomRoom(e.target.value)}
-              className="mt-3 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-violet-500 focus:outline-none"
-              autoFocus
-            />
-          )}
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
+        <section className="mb-lg">
+          <span className="mb-base inline-block rounded-full bg-tertiary-fixed px-3 py-1 font-label-caps text-label-caps text-tertiary">
+            JUDGMENT TIME
+          </span>
+          <h1 className="font-h1 text-h1 leading-tight">
+            Which room are we judging today?
+          </h1>
         </section>
 
-        {/* Image upload */}
-        <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-zinc-400">
-            Photo
-          </h2>
+        <section className="mb-lg grid grid-cols-2 gap-md">
+          {ROOM_OPTIONS.map((room) => {
+            const selected = roomName === room.name;
+            return (
+              <button
+                key={room.name}
+                type="button"
+                onClick={() => setRoomName(room.name)}
+                className={`squish-active flex min-h-40 flex-col items-center justify-center gap-sm rounded-lg bg-surface-container-lowest p-md tinted-shadow transition-all ${room.hover} ${
+                  selected ? "ring-2 ring-primary ring-offset-2" : ""
+                }`}
+              >
+                <span
+                  className={`flex h-16 w-16 items-center justify-center rounded-full ${room.circle}`}
+                >
+                  <span className="material-symbols-outlined text-[32px]">
+                    {room.icon}
+                  </span>
+                </span>
+                <span className="text-center font-h3 text-h3">
+                  {room.name}
+                </span>
+              </button>
+            );
+          })}
 
+          <button
+            type="button"
+            onClick={() => setRoomName("__custom__")}
+            className={`squish-active col-span-2 flex items-center justify-center rounded-lg bg-surface-container-lowest p-md tinted-shadow transition-all hover:bg-surface-variant ${
+              roomName === "__custom__" ? "ring-2 ring-primary ring-offset-2" : ""
+            }`}
+          >
+            <span className="mr-md flex h-12 w-12 items-center justify-center rounded-full bg-on-surface-variant text-surface">
+              <span className="material-symbols-outlined text-[24px]">
+                other_houses
+              </span>
+            </span>
+            <span className="font-h3 text-h3">Something Else</span>
+          </button>
+        </section>
+
+        {roomName === "__custom__" && (
+          <input
+            type="text"
+            placeholder="Name this room"
+            value={customRoom}
+            onChange={(e) => setCustomRoom(e.target.value)}
+            className="mb-md h-14 w-full rounded-xl border-2 border-outline-variant bg-primary-fixed px-md font-body-lg text-body-lg text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:outline-none"
+            autoFocus
+          />
+        )}
+
+        <section className="mb-md">
           {imagePreview ? (
-            <div className="space-y-3">
+            <div className="space-y-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imagePreview}
                 alt="Room preview"
-                className="w-full rounded-xl object-cover"
-                style={{ maxHeight: 280 }}
+                className="aspect-[4/3] w-full rounded-xl object-cover tinted-shadow"
               />
               <button
                 type="button"
@@ -133,7 +172,7 @@ export default function CheckPage() {
                   setImagePreview(null);
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
-                className="text-sm text-zinc-500 underline hover:text-zinc-300"
+                className="font-body-base text-body-base text-on-surface-variant underline"
               >
                 Remove photo
               </button>
@@ -142,14 +181,16 @@ export default function CheckPage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-zinc-700 py-12 transition hover:border-zinc-500"
+              className="squish-active flex min-h-56 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-lowest p-md text-center"
             >
-              <span className="text-4xl">📷</span>
-              <span className="text-sm text-zinc-400">
-                Upload a photo or take one
+              <span className="material-symbols-outlined mb-sm text-[52px] text-primary">
+                photo_camera
               </span>
-              <span className="text-xs text-zinc-600">
-                JPG, PNG, HEIC — any room photo works
+              <span className="font-h3 text-h3 text-primary">
+                Upload Photo
+              </span>
+              <span className="font-body-base text-body-base text-on-surface-variant">
+                Let Broomba see the mess
               </span>
             </button>
           )}
@@ -164,28 +205,28 @@ export default function CheckPage() {
           />
         </section>
 
-        {/* Submit */}
+        <section className="mb-lg flex items-start gap-md rounded-lg p-md glass-card">
+          <span className="material-symbols-outlined text-[32px] text-primary">
+            smart_toy
+          </span>
+          <div>
+            <p className="font-body-lg text-body-lg italic text-on-surface">
+              &ldquo;{quip}&rdquo;
+            </p>
+            <p className="mt-base font-label-caps text-label-caps text-on-surface-variant">
+              BROOMBA AI IS READY
+            </p>
+          </div>
+        </section>
+
         <button
           type="submit"
           disabled={!selectedRoom.trim() || isAnalyzing}
-          className="w-full rounded-xl bg-violet-600 py-4 font-semibold text-white transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50 active:scale-95"
+          className="squish-active mt-auto flex h-14 w-full items-center justify-center rounded-full bg-primary font-h3 text-h3 text-on-primary shadow-[0_8px_30px_rgba(85,14,231,0.3)] transition disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isAnalyzing ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="animate-spin">⏳</span>
-              Analyzing…
-            </span>
-          ) : (
-            "Roast this room"
-          )}
+          {isAnalyzing ? "Analyzing..." : "Roast this room"}
         </button>
-
-        {!imagePreview && selectedRoom.trim() && (
-          <p className="text-center text-xs text-zinc-600">
-            No photo? No problem — analysis works without one in prototype mode.
-          </p>
-        )}
       </form>
-    </div>
+    </main>
   );
 }

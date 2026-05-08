@@ -4,8 +4,45 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { MOCK_HISTORY } from "@/lib/mock-analysis";
-import { getStatusConfig, formatRelativeTime } from "@/lib/status";
-import type { RoomCheck } from "@/types";
+import type { RoomCheck, RoomStatus } from "@/types";
+
+const STATUS_STYLES: Record<
+  RoomStatus,
+  { badge: string; icon: string; label?: string }
+> = {
+  Stable: {
+    badge: "bg-secondary text-on-secondary",
+    icon: "bg-secondary-fixed text-on-secondary-fixed-variant",
+  },
+  "Slight Drift": {
+    badge: "bg-primary text-on-primary",
+    icon: "bg-primary-fixed text-primary",
+  },
+  "Getting Suspicious": {
+    badge: "bg-tertiary-container text-on-tertiary",
+    icon: "bg-tertiary-fixed text-tertiary",
+  },
+  "Side Quest": {
+    badge: "bg-error text-on-error",
+    icon: "bg-error-container text-error",
+  },
+  "Bro…": {
+    badge: "bg-error text-on-error",
+    icon: "bg-error-container text-error",
+    label: "Bro...",
+  },
+};
+
+const EVIDENCE_ICONS = [
+  "coffee_maker",
+  "bottom_sheets",
+  "terrain",
+  "cleaning_services",
+];
+
+function formatEffort(effort: string) {
+  return effort.replace("min", "mins").toUpperCase();
+}
 
 export default function ResultContent() {
   const searchParams = useSearchParams();
@@ -38,102 +75,111 @@ export default function ResultContent() {
 
   if (!check) {
     return (
-      <div className="flex h-48 items-center justify-center text-zinc-500">
-        Loading…
+      <div className="flex h-screen items-center justify-center bg-background font-body-lg text-body-lg text-on-surface-variant">
+        Loading...
       </div>
     );
   }
 
-  const cfg = getStatusConfig(check.analysis.status);
+  const statusStyle = STATUS_STYLES[check.analysis.status];
 
   return (
-    <div className="space-y-6">
-      <Link href="/" className="text-sm text-zinc-500 hover:text-zinc-300">
-        ← Dashboard
-      </Link>
+    <main className="min-h-screen bg-background pb-32 font-body-base">
+      <section className="relative w-full aspect-[4/5] overflow-hidden rounded-b-lg tinted-shadow">
+        {check.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={check.imageUrl}
+            alt={`${check.roomName} photo`}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary-fixed to-surface-container">
+            <span className="material-symbols-outlined text-[96px] text-primary">
+              photo_camera
+            </span>
+          </div>
+        )}
 
-      <div>
-        <h1 className="text-2xl font-bold">{check.roomName}</h1>
-        <p className="text-sm text-zinc-500">
-          {formatRelativeTime(check.timestamp)}
-        </p>
-      </div>
-
-      {check.imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={check.imageUrl}
-          alt={`${check.roomName} photo`}
-          className="w-full rounded-2xl object-cover"
-          style={{ maxHeight: 320 }}
-        />
-      )}
-
-      <div
-        className={`flex items-center gap-3 rounded-2xl border p-5 ${cfg.bg} ${cfg.border}`}
-      >
-        <span className="text-4xl">{cfg.emoji}</span>
-        <div>
-          <p className={`text-sm font-semibold uppercase tracking-widest ${cfg.color}`}>
-            Status
-          </p>
-          <p className={`text-2xl font-bold ${cfg.color}`}>
-            {check.analysis.status}
-          </p>
-        </div>
-      </div>
-
-      <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-          Bro says
-        </p>
-        <p className="text-lg font-medium leading-snug">
-          &ldquo;{check.analysis.roast}&rdquo;
-        </p>
-      </section>
-
-      <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-          What I see
-        </p>
-        <ul className="space-y-2">
-          {check.analysis.observations.map((obs, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
-              <span className="mt-0.5 text-zinc-600">•</span>
-              {obs}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="rounded-2xl border border-violet-800 bg-violet-950/50 p-5">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">
-            The Move
-          </p>
-          <span className="rounded-full bg-violet-900/60 px-2 py-0.5 text-xs font-medium text-violet-300">
-            {check.analysis.effort}
+        <div className="absolute right-4 top-4 -rotate-3">
+          <span
+            className={`block rounded-full px-6 py-2 font-h3 text-h3 uppercase tracking-widest shadow-2xl ${statusStyle.badge}`}
+          >
+            {statusStyle.label ?? check.analysis.status}
           </span>
         </div>
-        <p className="mt-2 font-semibold text-violet-100">
-          {check.analysis.cleanupAction}
-        </p>
       </section>
 
-      <div className="flex gap-3">
-        <Link
-          href="/check"
-          className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 py-3 text-center text-sm font-medium text-zinc-300 transition hover:border-zinc-600"
-        >
-          Check another room
-        </Link>
-        <Link
-          href="/"
-          className="flex-1 rounded-xl bg-violet-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-violet-500"
-        >
-          Back to dashboard
-        </Link>
+      <div className="flex flex-col gap-md px-margin-mobile pt-md">
+        <section>
+          <h2 className="font-h2 text-h2 leading-tight text-primary">
+            {check.analysis.roast}
+          </h2>
+        </section>
+
+        <section className="flex flex-col gap-sm">
+          <h3 className="px-xs font-label-caps text-label-caps uppercase tracking-widest text-outline">
+            THE EVIDENCE
+          </h3>
+          <div className="grid grid-cols-1 gap-sm">
+            {check.analysis.observations.map((observation, index) => (
+              <div
+                key={`${observation}-${index}`}
+                className="flex items-center gap-md rounded-lg p-md glass-card"
+              >
+                <span
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${statusStyle.icon}`}
+                >
+                  <span className="material-symbols-outlined">
+                    {EVIDENCE_ICONS[index % EVIDENCE_ICONS.length]}
+                  </span>
+                </span>
+                <p className="font-body-lg text-body-lg text-on-surface">
+                  {observation}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-base rounded-lg border-2 border-secondary bg-secondary-container p-md text-on-secondary-container tinted-shadow">
+          <div className="flex items-center justify-between gap-md">
+            <span className="rounded-full bg-on-secondary-container/10 px-3 py-1 font-label-caps text-label-caps">
+              ONE TINY ACTION
+            </span>
+            <span className="font-label-caps text-label-caps text-on-secondary-container/70">
+              {formatEffort(check.analysis.effort)}
+            </span>
+          </div>
+          <h3 className="font-h3 text-h3 leading-tight">
+            {check.analysis.cleanupAction}
+          </h3>
+          <p className="font-body-base text-body-base opacity-80">
+            Do it for your future self. They are rooting for you.
+          </p>
+        </section>
+
+        <div className="flex flex-col gap-sm pt-base">
+          <Link
+            href="/"
+            className="squish-active flex h-14 w-full items-center justify-center gap-base rounded-full bg-primary font-h3 text-h3 text-on-primary shadow-[0_8px_30px_rgba(85,14,231,0.3)]"
+          >
+            <span>Done, I&apos;m sorry</span>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              check_circle
+            </span>
+          </Link>
+          <button
+            type="button"
+            className="h-14 w-full rounded-full bg-surface-container-high font-body-lg text-body-lg text-on-surface-variant"
+          >
+            Save to History
+          </button>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
