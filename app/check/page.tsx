@@ -1,9 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getMockAnalysis } from "@/lib/mock-analysis";
+import {
+  getAttribution,
+  getDeviceId,
+  getQuotaState,
+  recordEvent,
+  recordSuccessfulScan,
+  saveLatestCheck,
+} from "@/lib/client-storage";
+import { resizeImageForAnalysis } from "@/lib/image-client";
+import type { RoomCheck } from "@/types";
 
 const ROOM_OPTIONS = [
   {
@@ -44,6 +53,8 @@ export default function CheckPage() {
   const [customRoom, setCustomRoom] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [quota, setQuota] = useState(getQuotaState);
 
   const selectedRoom = roomName === "__custom__" ? customRoom : roomName;
   const selectedOption = ROOM_OPTIONS.find((room) => room.name === roomName);
@@ -53,35 +64,100 @@ export default function CheckPage() {
       : selectedOption?.quip ??
         "I've seen cleaner garage floors than what you're about to show me, haven't I?";
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  useEffect(() => {
+    setQuota(getQuotaState());
+  }, []);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      setImagePreview(ev.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+    setError(null);
+    try {
+      const resized = await resizeImageForAnalysis(file);
+      setImagePreview(resized);
+    } catch (err) {
+      setImagePreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setError(err instanceof Error ? err.message : "Could not prepare this photo.");
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedRoom.trim()) return;
+    const nextQuota = getQuotaState();
+    setQuota(nextQuota);
+    if (!selectedRoom.trim()) {
+      setError("Pick or name a room first.");
+      return;
+    }
+    if (!imagePreview) {
+      setError("Add a room photo before asking Broomba to judge it.");
+      return;
+    }
+    if (nextQuota.remaining <= 0) {
+      setError(
+        nextQuota.resetAt
+          ? `Daily beta scan limit reached. Try again after ${new Date(
+              nextQuota.resetAt
+            ).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}.`
+          : "Daily beta scan limit reached. Try again later."
+      );
+      return;
+    }
 
     setIsAnalyzing(true);
-
-    await new Promise((r) => setTimeout(r, 1800));
-    const result = getMockAnalysis(selectedRoom);
-
-    const checkData = {
-      id: crypto.randomUUID(),
-      roomName: selectedRoom,
-      imageUrl: imagePreview,
+    setError(null);
+    recordEvent({
+      name: "scan_started",
       timestamp: new Date().toISOString(),
-      analysis: result,
-    };
-    sessionStorage.setItem("latestCheck", JSON.stringify(checkData));
+      attribution: getAttribution(),
+      details: { roomName: selectedRoom.trim() },
+    });
 
-    router.push("/result");
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          roomName: selectedRoom.trim(),
+          imageData: imagePreview,
+          personality: "bro",
+          deviceId: getDeviceId(),
+          attribution: getAttribution(),
+        }),
+      });
+
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Broomba could not analyze that photo.");
+      }
+
+      const checkData: RoomCheck = {
+        id: crypto.randomUUID(),
+        roomName: selectedRoom.trim(),
+        imageUrl: imagePreview,
+        timestamp: new Date().toISOString(),
+        analysis: payload.analysis,
+      };
+      saveLatestCheck(checkData);
+      recordSuccessfulScan();
+      recordEvent({
+        name: "scan_completed",
+        timestamp: new Date().toISOString(),
+        attribution: getAttribution(),
+        details: { roomName: selectedRoom.trim(), status: payload.analysis.status },
+      });
+      router.push("/result");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Broomba got distracted. Try that scan again."
+      );
+    } finally {
+      setQuota(getQuotaState());
+      setIsAnalyzing(false);
+    }
   }
 
   return (
@@ -170,6 +246,7 @@ export default function CheckPage() {
                 type="button"
                 onClick={() => {
                   setImagePreview(null);
+                  setError(null);
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
                 className="font-body-base text-body-base text-on-surface-variant underline"
@@ -194,6 +271,10 @@ export default function CheckPage() {
               </span>
             </button>
           )}
+          <p className="mt-sm font-body-base text-body-base text-on-surface-variant">
+            Photos are resized in your browser, then sent to Broomba&apos;s AI
+            provider for analysis.
+          </p>
 
           <input
             ref={fileInputRef}
@@ -204,6 +285,24 @@ export default function CheckPage() {
             className="hidden"
           />
         </section>
+
+        <section className="mb-md rounded-lg bg-primary-fixed p-md text-on-primary-fixed">
+          <div className="flex items-center justify-between gap-md">
+            <span className="font-label-caps text-label-caps">BETA SCANS</span>
+            <span className="font-h3 text-h3">
+              {quota.remaining}/{quota.limit}
+            </span>
+          </div>
+          <p className="mt-base font-body-base text-body-base">
+            Daily soft limit keeps the free beta fast and available for real homes.
+          </p>
+        </section>
+
+        {error && (
+          <p className="mb-md rounded-lg bg-error-container p-md font-body-base text-body-base text-on-error-container">
+            {error}
+          </p>
+        )}
 
         <section className="mb-lg flex items-start gap-md rounded-lg p-md glass-card">
           <span className="material-symbols-outlined text-[32px] text-primary">
@@ -221,7 +320,7 @@ export default function CheckPage() {
 
         <button
           type="submit"
-          disabled={!selectedRoom.trim() || isAnalyzing}
+          disabled={!selectedRoom.trim() || !imagePreview || isAnalyzing || quota.remaining <= 0}
           className="squish-active mt-auto flex h-14 w-full items-center justify-center rounded-full bg-primary font-h3 text-h3 text-on-primary shadow-[0_8px_30px_rgba(85,14,231,0.3)] transition disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isAnalyzing ? "Analyzing..." : "Roast this room"}

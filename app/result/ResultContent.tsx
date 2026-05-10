@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { MOCK_HISTORY } from "@/lib/mock-analysis";
+import {
+  getAttribution,
+  getCheckById,
+  getLatestCheck,
+  recordEvent,
+  saveCheck,
+} from "@/lib/client-storage";
 import type { RoomCheck, RoomStatus } from "@/types";
 
 const STATUS_STYLES: Record<
@@ -48,10 +55,20 @@ export default function ResultContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [check, setCheck] = useState<RoomCheck | null>(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const isMockHistory = searchParams.get("mock") === "1";
     const id = searchParams.get("id");
+
+    if (!isMockHistory && id) {
+      const found = getCheckById(id);
+      if (found) {
+        setCheck(found);
+        setSaved(true);
+        return;
+      }
+    }
 
     if (isMockHistory && id) {
       const found = MOCK_HISTORY.find((c) => c.id === id);
@@ -61,13 +78,9 @@ export default function ResultContent() {
       }
     }
 
-    const raw = sessionStorage.getItem("latestCheck");
-    if (raw) {
-      try {
-        setCheck(JSON.parse(raw));
-      } catch {
-        router.replace("/");
-      }
+    const latest = getLatestCheck();
+    if (latest) {
+      setCheck(latest);
     } else {
       router.replace("/");
     }
@@ -82,6 +95,19 @@ export default function ResultContent() {
   }
 
   const statusStyle = STATUS_STYLES[check.analysis.status];
+  const safeStatusStyle = statusStyle ?? STATUS_STYLES["Slight Drift"];
+
+  function handleSave() {
+    if (!check) return;
+    saveCheck(check);
+    setSaved(true);
+    recordEvent({
+      name: "result_saved",
+      timestamp: new Date().toISOString(),
+      attribution: getAttribution(),
+      details: { roomName: check.roomName, status: check.analysis.status },
+    });
+  }
 
   return (
     <main className="min-h-screen bg-background pb-32 font-body-base">
@@ -103,9 +129,9 @@ export default function ResultContent() {
 
         <div className="absolute right-4 top-4 -rotate-3">
           <span
-            className={`block rounded-full px-6 py-2 font-h3 text-h3 uppercase tracking-widest shadow-2xl ${statusStyle.badge}`}
+            className={`block rounded-full px-6 py-2 font-h3 text-h3 uppercase tracking-widest shadow-2xl ${safeStatusStyle.badge}`}
           >
-            {statusStyle.label ?? check.analysis.status}
+            {safeStatusStyle.label ?? check.analysis.status}
           </span>
         </div>
       </section>
@@ -128,7 +154,7 @@ export default function ResultContent() {
                 className="flex items-center gap-md rounded-lg p-md glass-card"
               >
                 <span
-                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${statusStyle.icon}`}
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${safeStatusStyle.icon}`}
                 >
                   <span className="material-symbols-outlined">
                     {EVIDENCE_ICONS[index % EVIDENCE_ICONS.length]}
@@ -174,9 +200,11 @@ export default function ResultContent() {
           </Link>
           <button
             type="button"
-            className="h-14 w-full rounded-full bg-surface-container-high font-body-lg text-body-lg text-on-surface-variant"
+            onClick={handleSave}
+            disabled={saved}
+            className="h-14 w-full rounded-full bg-surface-container-high font-body-lg text-body-lg text-on-surface-variant disabled:opacity-60"
           >
-            Save to History
+            {saved ? "Saved to History" : "Save to History"}
           </button>
         </div>
       </div>

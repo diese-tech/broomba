@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { MOCK_HISTORY } from "@/lib/mock-analysis";
+import { getHistory } from "@/lib/client-storage";
 import { formatRelativeTime } from "@/lib/status";
-import type { RoomStatus } from "@/types";
+import type { RoomCheck, RoomStatus } from "@/types";
 
 const STATUS_STYLES: Record<
   RoomStatus,
@@ -61,8 +65,16 @@ const ROOM_ICONS: Record<string, string> = {
 };
 
 export default function Dashboard() {
+  const [history, setHistory] = useState<RoomCheck[]>([]);
+
+  useEffect(() => {
+    setHistory(getHistory());
+  }, []);
+
+  const checks = history.length > 0 ? history : (MOCK_HISTORY as RoomCheck[]);
+  const isDemo = history.length === 0;
   const latestByRoom = Object.values(
-    MOCK_HISTORY.reduce<Record<string, (typeof MOCK_HISTORY)[0]>>(
+    checks.reduce<Record<string, RoomCheck>>(
       (acc, check) => {
         const existing = acc[check.roomName];
         if (!existing || check.timestamp > existing.timestamp) {
@@ -75,7 +87,7 @@ export default function Dashboard() {
   );
 
   const quip =
-    MOCK_HISTORY.find((check) => check.analysis.status !== "Stable")?.analysis
+    checks.find((check) => check.analysis.status !== "Stable")?.analysis
       .roast ?? "The floor is visible. Suspicious, but promising.";
 
   return (
@@ -112,7 +124,7 @@ export default function Dashboard() {
           <div className="flex items-end justify-between gap-md">
             <h2 className="font-h2 text-h2">Room Status</h2>
             <span className="rounded-full bg-primary-fixed px-3 py-1 font-label-caps text-label-caps text-primary">
-              SCANNING...
+              {isDemo ? "DEMO" : "LIVE"}
             </span>
           </div>
 
@@ -122,7 +134,9 @@ export default function Dashboard() {
               return (
                 <Link
                   key={check.id}
-                  href={`/result?id=${check.id}&mock=1`}
+                  href={
+                    isDemo ? `/result?id=${check.id}&mock=1` : `/result?id=${check.id}`
+                  }
                   className="flex items-center justify-between rounded-lg border border-outline-variant/20 bg-surface-container-lowest p-md tinted-shadow"
                 >
                   <div className="flex min-w-0 items-center gap-md">
@@ -165,10 +179,12 @@ export default function Dashboard() {
         <section className="space-y-md">
           <h2 className="font-h2 text-h2">Recent Roasts</h2>
           <div className="flex snap-x gap-md overflow-x-auto pb-4">
-            {MOCK_HISTORY.map((check) => (
+            {checks.map((check) => (
               <Link
                 key={check.id}
-                href={`/result?id=${check.id}&mock=1`}
+                href={
+                  isDemo ? `/result?id=${check.id}&mock=1` : `/result?id=${check.id}`
+                }
                 className="min-w-[280px] snap-start rounded-lg border border-white/40 bg-white/60 p-md shadow-sm backdrop-blur-md glass-card"
               >
                 <div className="mb-base flex items-center gap-sm">
@@ -185,6 +201,15 @@ export default function Dashboard() {
               </Link>
             ))}
           </div>
+        </section>
+
+        <section className="rounded-lg bg-secondary-container p-md text-on-secondary-container tinted-shadow">
+          <span className="font-label-caps text-label-caps">FREE BETA</span>
+          <h2 className="mt-base font-h3 text-h3">Help shape paid Broomba later.</h2>
+          <p className="mt-base font-body-base text-body-base opacity-80">
+            Scan a few rooms, save the results that feel useful, and use the ad
+            link you came from so we can learn which jokes are actually landing.
+          </p>
         </section>
       </main>
 

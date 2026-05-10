@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Inter, Syne } from "next/font/google";
+import AttributionTracker from "./AttributionTracker";
 import "./globals.css";
 
 const syne = Syne({
@@ -19,6 +21,16 @@ export const metadata: Metadata = {
   title: "Broomba - Your apartment has opinions.",
   description:
     "A personality-driven AI roommate that catches mess drift before life gets annoying.",
+  applicationName: "Broomba",
+  appleWebApp: {
+    capable: true,
+    title: "Broomba",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#550ee7",
 };
 
 function BottomNav() {
@@ -67,6 +79,9 @@ export default function RootLayout({
       <body
         className={`${syne.variable} ${inter.variable} min-h-screen bg-background text-on-background antialiased`}
       >
+        <Suspense fallback={null}>
+          <AttributionTracker />
+        </Suspense>
         {children}
         <BottomNav />
       </body>
